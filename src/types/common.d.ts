@@ -26,3 +26,12 @@ export interface UserInfoDefine {
   avatarPath: string,
   userRoutes: UserRoutesDefine
 }
+
+// 后端统一返回的数据结构
+export interface ResultDefine {
+  data: any,
+  code: number,
+  msg: string,
+  success: boolean,
+  total: string
+}

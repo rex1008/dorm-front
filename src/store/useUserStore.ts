@@ -2,11 +2,17 @@ import { defineStore } from 'pinia'
 import type { UserInfoDefine } from '../types/common'
 import { getItem } from '../util/storageUtil'
 import { STORAGE_USER_INFO_KEY } from '../config/constants'
+import pinia from '.'
 
 // 命名一般为hook的方式，即userXXX
 export const useUserStore = defineStore("user", {
   // 定义动作的地方
-  actions: {},
+  actions: {
+    updateUserRoutesAttached(attached: boolean) {
+      // 
+      this.userRoutesAttached = attached
+    }
+  },
   // 存储数据的地方
   state() {
     return {
@@ -21,3 +27,8 @@ export const useUserStore = defineStore("user", {
     }
   }
 })
+
+// 在非.vue组件中使用store，需要传入pinia实例
+export function useUserStoreExternal() {
+  return useUserStore(pinia)
+}
