@@ -74,7 +74,8 @@ router.beforeEach((toRoute, fromRoute, next) => {
       return next()
     }
     // 没有token跳转到登录页
-    return next({path: "/login"})
+    // return next({path: "/login"})
+    return next()
   }
 })
 

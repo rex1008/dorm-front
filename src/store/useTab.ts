@@ -1,0 +1,29 @@
+import { defineStore } from 'pinia'
+import type { TabArrayDefine, TabDefine } from '../types/common'
+
+// 命名一般为hook的方式，即userXXX
+export const useTabStore = defineStore("tab", {
+  // 定义动作的地方
+  actions: {
+    addTabIfNotExist(tabToAdd: TabDefine) {
+      // 判断state里面是否已存在
+      let existFlag = this.openedTabInfo.tabs.some(obj => obj.path === tabToAdd.path)
+      if(existFlag) {
+        return
+      }
+      this.addTab(tabToAdd)
+    },
+    addTab(tabToAdd: TabDefine) {
+      this.openedTabInfo.tabs.push(tabToAdd)
+    }
+  },
+  // 存储数据的地方
+  state() {
+    return {
+      openedTabInfo: {
+        // 要打开的tab数据
+        tabs: [] as TabArrayDefine
+      }
+    }
+  }
+})

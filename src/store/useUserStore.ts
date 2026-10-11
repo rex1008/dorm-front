@@ -3,6 +3,7 @@ import type { UserInfoDefine } from '../types/common'
 import { getItem } from '../util/storageUtil'
 import { STORAGE_USER_INFO_KEY } from '../config/constants'
 import pinia from '.'
+import userRoutes from '../config/userRoutes'
 
 // 命名一般为hook的方式，即userXXX
 export const useUserStore = defineStore("user", {
@@ -21,7 +22,7 @@ export const useUserStore = defineStore("user", {
         id: "123",
         username: "",
         avatarPath: "",
-        userRoutes: []
+        userRoutes: userRoutes
       } as UserInfoDefine,
       userRoutesAttached: false,
     }
