@@ -15,6 +15,9 @@ export const useTabStore = defineStore("tab", {
     },
     addTab(tabToAdd: TabDefine) {
       this.openedTabInfo.tabs.push(tabToAdd)
+    },
+    closeTab(tabName: string) {
+      this.openedTabInfo.tabs = this.openedTabInfo.tabs.filter(val => val.path !== tabName)
     }
   },
   // 存储数据的地方
