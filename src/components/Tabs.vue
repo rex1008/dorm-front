@@ -38,7 +38,7 @@
 </template>
 
 <script setup name="Tabs" lang="ts">
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, toRef, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTabStore } from '../store/useTab.ts';
 import type { TabsPaneContext } from 'element-plus';
@@ -57,7 +57,7 @@ let locatedTab = reactive<TabDefine>({path: "", text: "", fullPath: ""})
 let router = useRouter()
 let currentRoute = useRoute()
 let tabStore = useTabStore()
-let openedTabs = tabStore.openedTabInfo.tabs
+let openedTabs = toRef(tabStore.openedTabInfo, "tabs")
 
 // 监听contextMenuVisible.value的变化
 watch(contextMenuVisible, () => {
@@ -87,7 +87,7 @@ watch(currentRoute, (newValue, oldValue) => {
 })
 
 function tabClick(tab: TabsPaneContext) {
-  let clickedTab = openedTabs.find(obj => obj.path === tab.paneName) as TabDefine
+  let clickedTab = openedTabs.value.find(obj => obj.path === tab.paneName) as TabDefine
   router.replace(clickedTab.fullPath)
 }
 
@@ -117,7 +117,7 @@ function openContextMenu(e: PointerEvent) {
   let start = tabIndex + "tab-".length
   // 
   let locatedTabPath = (e.target as HTMLElement).id.substring(start)
-  // 标记当前点击的tab
+  // 标记当前打开右键菜单的tab
   locatedTab = findTabByPath(locatedTabPath) as TabDefine
 
   // 计算右键菜单中哪些选项需要存在，哪些不需要存在
@@ -132,40 +132,40 @@ function closeContextMenu() {
 
 function decideLeftVisible() {
   // 当前点击的tab页不是最左边的，右键菜单就可以显示“关闭左边”
-  leftVisible.value = locatedTab.path != openedTabs[0].path
+  leftVisible.value = locatedTab.path != openedTabs.value[0].path
 }
 
 function decideRightVisible() {
   // 当前点击的tab页不是最右边的，右键菜单就可以显示“关闭右边”
-  rightVisible.value = locatedTab.path != openedTabs[openedTabs.length - 1].path
+  rightVisible.value = locatedTab.path != openedTabs.value[openedTabs.value.length - 1].path
 }
 
 function decideOtherVisible() {
   // 只要打开的tab页多于1个，右键菜单就可以显示“关闭其他”
-  otherVisible.value = openedTabs.length > 1
+  otherVisible.value = openedTabs.value.length > 1
 }
 
 function findTabByPath(path: string): TabDefine | undefined {
-  return openedTabs.find(obj => obj.path === path)
+  return openedTabs.value.find(obj => obj.path === path)
 }
 
 function closeTab(tabName: string) {
-  // 关闭的是激活的tab
+  // 只有当关闭的是激活的tab，才需要做下面的处理，否则如果关闭的是一个非激活的tab，则直接修改store即可
   if(tabName == activeTabName.value) {
-    if(openedTabs.length == 1) {
+    if(openedTabs.value.length === 1) {
       // 只有1个tab时，关闭后跳转到首页
       router.replace("/")
     }else {
       // 计算当前点击的是哪个tab
-      let tabToCloseIndex = openedTabs.findIndex(obj => obj.path === tabName)
+      let tabToCloseIndex = openedTabs.value.findIndex(obj => obj.path === tabName)
       let tabToActive: TabDefine
 
       if(tabToCloseIndex === 0) {
         // 当前点击的tab是第一个tab，则激活其右边的tab页
-        tabToActive = openedTabs[tabToCloseIndex + 1]
+        tabToActive = openedTabs.value[tabToCloseIndex + 1]
       }else {
         // 当前点击的tab不是第一个tab，则激活其左边的tab页
-        tabToActive = openedTabs[tabToCloseIndex + 1]
+        tabToActive = openedTabs.value[tabToCloseIndex - 1]
       }
 
       // 跳转到要激活的tab页
@@ -178,27 +178,53 @@ function closeTab(tabName: string) {
 }
 
 function refreshTab() {
-  
+  router.replace({
+    path: "/redirect" + locatedTab.path,
+    query: locatedTab.query
+  })
 }
 
 function closeCurrent() {
-
+  closeTab(locatedTab.path)
 }
 
 function closeOthers() {
-
+  tabStore.closeOthers(locatedTab)
+  // 当前操作右键的tab不是激活的tab，说明是在非激活的tab上进行的”关闭其他“操作，此时需要将路由跳转到当前操作右键的tab
+  if(locatedTab.path !== activeTabName.value) {
+    router.replace(locatedTab.fullPath)
+  }
 }
 
 function closeLeft() {
+  tabStore.closeLeft(locatedTab)
 
+  // 处理当前操作右键的tab不是激活的tab的情况
+  if(locatedTab.path !== activeTabName.value) {
+    let activeTab = findTabByPath(activeTabName.value)
+    if(!activeTab) {
+      // 如果激活tab不存在，说明激活的tab被关闭了，需要跳转到当前当前操作右键的tab
+      router.replace(locatedTab.fullPath)
+    }
+  }
 }
 
 function closeRight() {
+  tabStore.closeRight(locatedTab)
 
+  // 处理当前被右键操作的tab不是激活的tab的情况
+  if(locatedTab.path !== activeTabName.value) {
+    let activeTab = findTabByPath(activeTabName.value)
+    if(!activeTab) {
+      // 如果激活tab不存在，说明激活的tab被关闭了，需要跳转到当前当前操作右键的tab
+      router.replace(locatedTab.fullPath)
+    }
+  }
 }
 
 function closeAll() {
-
+  tabStore.closeAll()
+  router.replace("/")
 }
 </script>
 

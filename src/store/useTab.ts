@@ -18,6 +18,26 @@ export const useTabStore = defineStore("tab", {
     },
     closeTab(tabName: string) {
       this.openedTabInfo.tabs = this.openedTabInfo.tabs.filter(val => val.path !== tabName)
+    },
+    closeOthers(locatedTab: TabDefine) {
+      this.openedTabInfo.tabs = this.openedTabInfo.tabs.filter(val => val.path === locatedTab.path)
+    },
+    closeLeft(locatedTab: TabDefine) {
+      // 先计算出locatedTab索引
+      let locatedTabIndex = this.openedTabInfo.tabs.findIndex(obj => obj.path === locatedTab.path)
+      // 遍历tabs，从locatedTabIndex下标开始都保留
+      let remainTabs = this.openedTabInfo.tabs.filter((obj, index) => index >= locatedTabIndex)
+      this.openedTabInfo.tabs = remainTabs
+    },
+    closeRight(locatedTab: TabDefine) {
+      // 先计算出locatedTab索引
+      let locatedTabIndex = this.openedTabInfo.tabs.findIndex(obj => obj.path === locatedTab.path)
+      // 遍历tabs，从下标0到locatedTabIndex下标保留，大于locatedTabIndex的全部移除
+      let remainTabs = this.openedTabInfo.tabs.filter((obj, index) => index <= locatedTabIndex)
+      this.openedTabInfo.tabs = remainTabs
+    },
+    closeAll() {
+      this.openedTabInfo.tabs = []
     }
   },
   // 存储数据的地方
