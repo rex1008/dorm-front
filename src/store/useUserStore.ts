@@ -12,6 +12,11 @@ export const useUserStore = defineStore("user", {
     updateUserRoutesAttached(attached: boolean) {
       // 
       this.userRoutesAttached = attached
+    },
+    storeUserInfo(userInfo: UserInfoDefine) {
+      // 模拟登录成功获取到token后再从后端获取当前用户拥有的路由
+      userInfo.userRoutes = userRoutes
+      this.userInfo = userInfo
     }
   },
   // 存储数据的地方
@@ -22,7 +27,7 @@ export const useUserStore = defineStore("user", {
         id: "123",
         username: "",
         avatarPath: "",
-        userRoutes: userRoutes
+        userRoutes: []
       } as UserInfoDefine,
       userRoutesAttached: false,
     }
