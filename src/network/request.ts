@@ -36,7 +36,7 @@ instance.interceptors.response.use((resultWrapper: AxiosResponse<any, any>) => {
 
   // resultWrapper.data才是真正的服务器返回的数据
   const result = resultWrapper.data
-  if(result.sucess) {
+  if(result.success) {
     return result
   }else {
     if(result.code && result.code === 30001) {

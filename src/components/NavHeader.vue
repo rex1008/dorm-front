@@ -36,13 +36,14 @@
           <el-input v-model="updateProfileFormData.username" disabled></el-input>
         </el-form-item>
         <el-form-item label="照片:" prop="avatarPath">
-          <el-upload action="xxx"
+          <el-upload :action="uploadCfg.uploadUrl"
+            :headers="uploadCfg.headers"
             :auto-upload="true"
             list-type="picture-card"
-            :show-file-list="true" :on-success="handleAvatarSuccess"
+            :show-file-list="true" :on-success="handleSuccess"
             :limit="1"
-            :on-exceed="handleAvatarExceed"
-            :on-remove="handleAvatarRemove"
+            :on-exceed="handleExceed"
+            :on-remove="handleRemove"
             :file-list="uploadInfo.fileList"
             >
             <template v-slot:trigger>
@@ -76,7 +77,9 @@ import { useResource } from '../hooks/useResource';
 import { clearAll } from '../util/storageUtil';
 import { useRouter } from 'vue-router';
 import { reactive, ref } from 'vue'; 
-import { UploadUserFile } from 'element-plus';
+import { ElMessage, type UploadFile, type UploadFiles, type UploadUserFile } from 'element-plus';
+import { modifyByIdApi, queryByIdApi } from '../api/managerApi';
+import { useUpload } from '../hooks/useUpload';
 
 let updateProfileForm = ref()
 
@@ -107,6 +110,7 @@ let uploadInfo = reactive<{ fileList: UploadUserFile[] }>({
 let userStore = useUserStore()
 let { toAddressable } = useResource()
 let router = useRouter()
+let { handleExceed, uploadCfg } = useUpload()
 
 function handleCommand(command: string) {
   if("logout" === command) {
@@ -114,6 +118,16 @@ function handleCommand(command: string) {
     clearAll()
     router.replace("/login")
   }else if("updateProfile" === command) {
+    // 查询用户信息回显
+    queryByIdApi(userStore.userInfo.id).then(result => {
+      Object.assign(updateProfileFormData, result.data)
+      // 设置头像
+      let fullAvatarPath = toAddressable(result.data.avatarPath)
+      if(fullAvatarPath) {
+        uploadInfo.fileList.push({url: fullAvatarPath, name: ""})
+      }
+    })
+
     updateProfileDiaVisible.value = true
   }else if("updatePwd" === command) {
 
@@ -127,20 +141,42 @@ function handleUpdateProfileDiaClose() {
 
 // 提交修改个人信息
 function updateProfile() {
+  updateProfileForm.value.validate((valid: boolean) => {
+    if(!valid) return
+    modifyByIdApi(updateProfileFormData).then(result => {
+      ElMessage({"message": result.data, "type": "success"})
+      uploadInfo.fileList = []
 
+      // 在表单重置之前更新userStore，否则重置了之后就没值了
+      userStore.$patch((state) => {
+        // 头像有可能更新，把userStore中的头像数据覆盖下
+        state.userInfo.avatarPath = updateProfileFormData.avatarPath
+      })
+
+      updateProfileForm.value.resetFields()
+      updateProfileDiaVisible.value = false
+    })
+  })
 }
 
-function handleAvatarSuccess() {
+function handleSuccess(response: any, file: UploadFile, fileList: UploadFiles) {
+  if(response.success) {
+    uploadInfo.fileList = fileList
 
+    // 业务逻辑
+    updateProfileFormData.avatarPath = response.data
+    updateProfileForm.value.validateField("avatarPath")
+  }else {
+    ElMessage({message: response.msg, type: "error"})
+  }
 }
 
-function handleAvatarExceed() {
-  
-}
+// file：删除的文件，fileList：还剩下的文件列表
+function handleRemove(file: UploadFile, fileList: UploadFiles) {
+  uploadInfo.fileList = fileList
 
-
-function handleAvatarRemove() {
-  
+  // 业务逻辑
+  updateProfileFormData.avatarPath = ""
 }
 
 
