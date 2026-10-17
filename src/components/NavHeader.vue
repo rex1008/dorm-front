@@ -136,6 +136,8 @@ function handleCommand(command: string) {
 
 // 修改个人信息对话框弹窗关闭回调
 function handleUpdateProfileDiaClose() {
+  uploadInfo.fileList = []
+  updateProfileForm.value.resetFields()
   updateProfileDiaVisible.value = false
 }
 

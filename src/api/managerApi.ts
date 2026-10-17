@@ -12,7 +12,7 @@ export function loginApi(data: object) {
 }
 
 /**
- * 登录
+ * 查询个人信息
  * @param data
  */
 export function queryByIdApi(id: string) {
@@ -23,12 +23,23 @@ export function queryByIdApi(id: string) {
 }
 
 /**
- * 登录
+ * 修改个人信息
  * @param data
  */
 export function modifyByIdApi(data: object) {
   return appJsonPost({
     url: "/manager/modifyById",
+    data
+  })
+}
+
+/**
+ * 修改密码
+ * @param data
+ */
+export function modifyPwdApi(data: object) {
+  return appJsonPost({
+    url: "/manager/modifyPwd",
     data
   })
 }
