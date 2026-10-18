@@ -23,7 +23,7 @@ defineProps<{
   visible: boolean
 }>()
 
-let emitter = defineEmits(["update:visible", "addSuccess"])
+let emitter = defineEmits(["update:visible", "success"])
 
 let addForm = ref()
 let formData = reactive({
@@ -38,7 +38,7 @@ let rules = reactive({
 
 function handleCancel() {
   addForm.value.resetFields()
-  emitter("update:visible")
+  emitter("update:visible", false)
 }
 
 function onSubmit() {
@@ -48,7 +48,7 @@ function onSubmit() {
       ElMessage({ message: result.data, type: "success" })
 
       addForm.value.resetFields()
-      emitter("addSuccess")
+      emitter("success")
     })
   })
 }

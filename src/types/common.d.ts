@@ -63,3 +63,16 @@ export interface ResultDefine {
   success: boolean,
   total: string
 }
+
+// 对象的key可以是任意string类型的字符串，value可以是任意类型
+export interface AnyObjDefine {
+  [key: string]: any
+}
+
+export type AnyObjsDefine = Array<AnyObjDefine>
+
+export interface UseTableOptDefine {
+  searchFormData?: AnyObjDefine,
+  loadTableApi?: (obj: Object) => Promise<ResultDefine>,
+  deleteByIdApi?: (id: string) => Promise<ResultDefine>
+}
