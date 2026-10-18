@@ -37,3 +37,9 @@ export function modifyByIdApi(data: object) {
     data
   })
 }
+
+export function queryAllApi() {
+  return doGet({
+    url: "/dept/queryAll"
+  })
+}
