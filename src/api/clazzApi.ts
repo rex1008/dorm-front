@@ -43,3 +43,10 @@ export function queryAllApi() {
     url: "/clazz/queryAll"
   })
 }
+
+export function listByDeptIdApi(deptId: string) {
+  return doGet({
+    url: "/clazz/listByDeptId",
+    params: { deptId }
+  })
+}

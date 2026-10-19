@@ -48,19 +48,36 @@
         stripe
         :border="true"
         style="width: 100%">
-        <el-table-column
-          prop="studentNo"
-          label="学号">
+        <el-table-column prop="studentNo" label="学号">
         </el-table-column>
-        <el-table-column
-          prop="studentName"
-          label="姓名">
+        <el-table-column prop="studentName" label="姓名">
         </el-table-column>
-        <el-table-column
-          prop="deptName"
-          label="系别名称">
+        <el-table-column label="性别">
+          <template v-slot:default="scope">
+            <span v-if="scope.row.sex === 'M'">男</span>
+            <span v-if="scope.row.sex === 'F'">女</span>
+          </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="照片">
+          <template v-slot:default="scope">
+            <el-image v-if="scope.row.photoPath" 
+            style="width: 50px;height: 50px;"
+            :src="toAddressable(scope.row.photoPath)"
+            :preview-src-list="[toAddressable(scope.row.photoPath)]"
+            :preview-teleported="true"
+            fit="fill"
+            ></el-image>
+          </template>
+        </el-table-column>
+        <el-table-column prop="deptName" label="系别">
+        </el-table-column>
+        <el-table-column prop="clazzName" label="班级">
+        </el-table-column>
+        <el-table-column prop="dormBuildingName" label="宿舍楼">
+        </el-table-column>
+        <el-table-column prop="dormNo" label="宿舍">
+        </el-table-column>
+        <el-table-column label="操作" width="180px">
           <template v-slot:default="scope">
             <el-button type="primary" :icon="Edit" @click="openUpdateDia(scope.row.id)">
               编辑
@@ -110,8 +127,9 @@ import { deleteByIdApi, loadTableApi } from '../../api/studentApi.ts';
 import { queryAllApi as listDept } from '../../api/deptApi.ts';
 import { queryAllApi as listClazz } from '../../api/clazzApi.ts';
 import { AnyObjsDefine } from '../../types/common';
+import { useResource } from '../../hooks/useResource.ts';
 
-
+let { toAddressable } = useResource()
 let addDiaVisible = ref(false)
 let updateDiaVisible = ref(false)
 let idToUpdate = ref("")
