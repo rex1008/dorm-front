@@ -38,7 +38,7 @@
         style="width: 100%">
         <el-table-column
           prop="clazzNo"
-          label="编辑编号">
+          label="班级编号">
         </el-table-column>
         <el-table-column
           prop="clazzName"
