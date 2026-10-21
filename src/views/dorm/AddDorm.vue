@@ -8,10 +8,10 @@
             </el-select>
       </el-form-item>
       <el-form-item label="宿舍编号:" prop="dormNo">
-        <el-input v-model="formData.dormNo"></el-input>
+        <el-input v-model="formData.dormNo" style="width: 150px"></el-input>
       </el-form-item>
       <el-form-item label="宿舍容量:" prop="capacity">
-        <el-input-number v-model="formData.capacity" :pricision="0" :step="1" :min="1"></el-input-number>
+        <el-input-number v-model="formData.capacity" :pricision="0" :step="1" :min="1" style="width: 150px"></el-input-number>
       </el-form-item>
       <el-form-item label="添加学生:" prop="studentIds">
         <el-input v-model="formData.studentNames" disabled style="width: 400px">
@@ -34,7 +34,7 @@
 
 <script setup name="AddDorm" lang="ts">
 import { onMounted, reactive, ref } from 'vue';
-import { addApi } from '../../api/clazzApi';
+import { addApi } from '../../api/dormApi';
 import { ElMessage } from 'element-plus';
 import { queryAllApi as listDormbuilding } from '../../api/dormBuildingApi.ts';
 import { AnyObjsDefine } from '../../types/common';

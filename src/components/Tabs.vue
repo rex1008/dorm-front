@@ -77,7 +77,7 @@ watch(currentRoute, (newValue, oldValue) => {
   // 把路由对象转换成tab存储到pinia种
   let tab: TabDefine = {
     path: newValue.path,
-    text: newValue.meta.menuName as string,
+    text: newValue.meta.title as string,
     fullPath: newValue.fullPath,
     query: newValue.query
   }

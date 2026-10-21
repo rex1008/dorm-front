@@ -95,7 +95,7 @@ const userRoutes: UserRoutesDefine = [
         name: "AddDorm",
         componentPath: "dorm/AddDorm",
         meta: {
-          title: "添加管理",
+          title: "添加宿舍",
         }
       },
       {
@@ -103,7 +103,7 @@ const userRoutes: UserRoutesDefine = [
         name: "UpdateDorm",
         componentPath: "dorm/UpdateDorm",
         meta: {
-          title: "修改管理",
+          title: "修改宿舍",
         }
       }
     ]

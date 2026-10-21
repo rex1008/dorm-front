@@ -130,7 +130,7 @@ function toUpdate(id: string) {
 function listDormbuildingDropdown() {
   listDormbuilding().then(result => {
     formCfg.dormBuildingList = result.data
-    formCfg.dormBuildingList.unshift({id: "", deptName: "全部"})
+    formCfg.dormBuildingList.unshift({id: "", dormBuildingName: "全部"})
   })
 }
 
